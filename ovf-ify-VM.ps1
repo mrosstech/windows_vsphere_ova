@@ -1,11 +1,6 @@
+$vCenter = "vcenter.fqdn"
 $vmName = "AddVMNameHere"
-
-# Create the spec object
-$spec = New-Object VMware.Vim.VirtualMachineConfigSpec
-$spec.vAppConfig = New-Object VMware.Vim.VmConfigSpec
-$spec.vAppConfig.property = New-Object [System.Collections.ArrayList]VMware.Vim.VAppPropertySpec
-
-
+$bootScripts = "c:\path\to\boot\scripts"
 
 Function Add-vAppProperty($propArray, $label, $datatype, $userConfigurable, $defaultValue, $value, $description) {
 
@@ -29,6 +24,16 @@ Function Add-vAppProperty($propArray, $label, $datatype, $userConfigurable, $def
 
 }
 
+# Connect to the vCenter Server
+connect-viserver -Name $vCenter
+
+
+# Create the spec object
+$spec = New-Object VMware.Vim.VirtualMachineConfigSpec
+$spec.vAppConfig = New-Object VMware.Vim.VmConfigSpec
+$spec.vAppConfig.property = New-Object [System.Collections.ArrayList]VMware.Vim.VAppPropertySpec
+
+# Add all the properties
 Add-vAppProperty($spec.vAppConfig.property, "win.ip", "string", $false, "<enter ip>", "<enter ip>", "IP to assign to the VM")
 Add-vAppProperty($spec.vAppConfig.property, "win.mask", "string", $false, "<enter mask>", "<enter mask>", "SN Mask to assign to the VM")
 Add-vAppProperty($spec.vAppConfig.property, "win.gateway", "string", $false, "<enter GW>", "<enter GW>", "GW to assign to the VM")
@@ -42,3 +47,14 @@ Add-vAppProperty($spec.vAppConfig.property, "dc.domain", "string", $false, "<ent
  
 $vm = Get-VM -Name $vmName
 $vm.ExtensionData.ReconfigVM_Task($spec)
+
+# Verify properties written
+
+# Inject scripts into VM.
+
+# Create initial scheduled task
+
+# Shutdown VM
+
+# Export VM as OVA
+
